@@ -1,14 +1,30 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import *
+from rest_framework.fields import CharField, EmailField
+from domain.models import *
 
-class UserSerializer(serializers.ModelSerializer):
+class AppUserCreateSerializer(serializers.ModelSerializer):
     '''
-        Serializes the user model
+        Serializes the appuser model
     '''
+    first_name = serializers.CharField(source = 'user.first_name')
+    last_name = serializers.CharField(source = 'user.last_name')
+    email = serializers.EmailField(source = 'user.email')
+    password = serializers.CharField(source = 'user.password')
     class Meta:
-        model = User
-        fields = '__all__'
+        model = AppUser
+        fields = ('cellphone', 'accepted_terms', 'first_name', 'last_name', 'email', 'password')
+
+class AppUserResponseSerializer(serializers.ModelSerializer):
+    '''
+        Serializes the appuser model for api responses
+    '''
+    first_name = serializers.CharField(source = 'user.first_name')
+    last_name = serializers.CharField(source = 'user.last_name')
+    email = serializers.EmailField(source = 'user.email')
+    class Meta:
+        model = AppUser
+        fields = ('cellphone', 'first_name', 'last_name', 'email')
 
 class OrderLineItemResponseSerializer(serializers.ModelSerializer):
     '''

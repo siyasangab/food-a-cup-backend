@@ -9,6 +9,7 @@ from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView,
 from services.order_service import OrderService
 from services.menu_service import MenuService
 from services.restaurants import RestaurantsService
+from services.registration_service import RegistrationService
 from domain.serializers import *
 from domain.models import Option, OptionCategory
 from .permissions import Customer, CanChangeOrder
@@ -25,6 +26,18 @@ class Index(RetrieveAPIView):
     def get(self, request):
         return Response('PONG', status=status.HTTP_200_OK)
 
+class Register(CreateAPIView):
+    permission_classes = (permissions.AllowAny,)
+    def __init__(self):
+        self._registration_service = RegistrationService()
+
+    def post(self, request):
+        serializer = AppUserCreateSerializer(data = request.data)
+        if not serializer.is_valid():
+            return BAD_REQUEST(serializer.errors)
+        app_user = self._registration_service.create(**serializer.validated_data)
+        response_serializer = AppUserResponseSerializer(app_user)
+        return OK(response_serializer.data)
 
 class GetMenu(ListAPIView):
     '''
@@ -192,3 +205,4 @@ class GetMenuItemOptions(ListAPIView):
         serializer = MenuItemOptionResponseSerializer(options, many = True)
 
         return Response(serializer.data)
+

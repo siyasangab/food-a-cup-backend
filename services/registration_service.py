@@ -3,7 +3,6 @@ from django.contrib.auth.models import User, Group
 
 from domain.models import AppUser
 from services.appuser_service import AppUserService
-from services.restaurants_service import RestaurantsService
 from services.user_service import UserService
 
 class RegistrationService():
@@ -13,23 +12,14 @@ class RegistrationService():
     def create(self, **kwargs):
         with transaction.atomic():
             cellphone = kwargs.get('cellphone')
-            city = kwargs.get('city')
-            nickname = kwargs.get('nickname')
-            
-            del kwargs['cellphone']
-            del kwargs['city']
-            del kwargs['nickname']
-
-            user = UserService().create(**kwargs)
-
+            user = UserService().create(**kwargs.get('user'))
             app_user = AppUserService().create(**{ 
-                'user': user, 
-                'cellphone_number':  cellphone,
-                'city': city,
-                'nickname': nickname
+                'user_id': user.id, 
+                'cellphone':  cellphone,
+                'accepted_terms': True
             })
 
-            grp = Group.objects.get(name = 'Users')
+            grp = Group.objects.get(name = 'Customer')
             grp.user_set.add(user)
             return app_user
 

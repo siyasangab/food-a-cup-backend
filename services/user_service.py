@@ -6,7 +6,7 @@ class UserService():
 
     def create(self, **kwargs):
         user = User(**kwargs)
-        user.email = user.username
+        user.username = user.email
         user.set_password(kwargs.get('password'))
         user.save()
         return user

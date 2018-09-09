@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('', views.Index.as_view()),
+    path('account/register/', views.Register.as_view()),
     path('restaurants/location/', views.GetWithinRadius.as_view()),
     path('restaurants/search/', views.GetRestaurants.as_view()),
     path('suggest/', views.PrepopRestaurants.as_view()),

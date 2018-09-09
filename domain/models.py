@@ -10,7 +10,10 @@ class AppUser(models.Model):
         Abstract user class for the app
     '''
     user = models.ForeignKey(User, on_delete = models.CASCADE)
-    cellphone = models.CharField(max_length = 10)
+    cellphone = models.CharField(max_length = 10, unique = True)
+    accepted_terms = models.BooleanField(default = False)
+    email_verified = models.BooleanField(default = False)
+    cellphone_verified = models.BooleanField(default = False)
     created_on = models.DateTimeField(auto_now_add = True)
     last_updated = models.DateTimeField(auto_now_add = True)
 

@@ -4,7 +4,6 @@ from django.conf import settings
 from domain.models import AppUser
 from services.cache import app_users_cache
 from .user_service import UserService
-from . import restaurants
 from .base.service_base import ServiceBase
 
 class AppUserService(ServiceBase):
@@ -15,10 +14,9 @@ class AppUserService(ServiceBase):
     def create(self, **kwargs):
         try:
             app_user = AppUser.objects.create(**kwargs)
-            self.__set_cache__(app_user.user_id, app_user, None)
             return app_user
-        except Exception:
-            return None
+        except Exception as e:
+            raise Exception(e)
 
     def get_by_user_id(self, user_id):
         rint(f'Fetching appuser for user id {user_id}')
