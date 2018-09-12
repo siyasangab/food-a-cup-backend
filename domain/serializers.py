@@ -15,6 +15,14 @@ class AppUserCreateSerializer(serializers.ModelSerializer):
         model = AppUser
         fields = ('cellphone', 'accepted_terms', 'first_name', 'last_name', 'email', 'password')
 
+class AppUserUpdateSerializer(serializers.ModelSerializer):
+    '''
+        Appuser update serializer
+    '''
+    class Meta:
+        model = AppUser
+        fields = ('nickname',)
+
 class AppUserResponseSerializer(serializers.ModelSerializer):
     '''
         Serializes the appuser model for api responses
@@ -24,7 +32,7 @@ class AppUserResponseSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source = 'user.email')
     class Meta:
         model = AppUser
-        fields = ('cellphone', 'first_name', 'last_name', 'email')
+        fields = ('cellphone', 'first_name', 'last_name', 'email', 'nickname')
 
 class OrderLineItemResponseSerializer(serializers.ModelSerializer):
     '''

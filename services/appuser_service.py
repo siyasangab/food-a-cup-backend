@@ -18,20 +18,19 @@ class AppUserService(ServiceBase):
         except Exception as e:
             raise Exception(e)
 
-    def get_by_user_id(self, user_id):
-        rint(f'Fetching appuser for user id {user_id}')
-        cached = self.cache.get(user_id)
 
-        if cached != None:
-            return cached.get('appuser', None), cached.get('restaurants', None)
-
+    def get(self, appuser_id: int = 0, email: str = '', by = 'id'):
         try:
-            app_user = AppUser.objects.prefetch_related('user').get(user_id = user_id)
-            self.cache.set(user_id, app_user)
-            return app_user
-
-        except AppUser.DoesNotExist:
-            print(f'An error occurred while getting appuser for user id {user_id}')
+            if by == 'id':
+                if appuser_id == 0:
+                    raise ValueError('Appuser id is required when searching appuser by id')
+                appuser = AppUser.objects.get(pk = appuser_id)
+            elif by == 'email':
+                if not email:
+                    raise ValueError('Appuser email is required when searching appuser by email')
+                appuser = AppUser.objects.select_related('user').get(user__email = email)
+            return appuser
+        except Exception as e:
             return None
 
     def get_appuser_id_by_user_id(self, user_id):
@@ -52,11 +51,9 @@ class AppUserService(ServiceBase):
 
         return appuser_id
 
-    def update(self, user_id, **kwargs):
-        appuser = None
-        try:
-            appuser = self.get_by_user_id(user_id)
-        except AppUser.DoesNotExist:
+    def update(self, appuser_id, **kwargs):
+        appuser = self.get(appuser_id)
+        if not appuser:
             return False
 
         appuser.city = kwargs.get('city')
@@ -65,9 +62,9 @@ class AppUserService(ServiceBase):
         try:
             appuser.save()
         except Exception as e:
-            print(e)
+            return False
 
-        self.cache.set(user_id, appuser)
+        self.cache.set(appuser_id, appuser)
 
         return True
 

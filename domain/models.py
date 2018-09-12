@@ -11,6 +11,7 @@ class AppUser(models.Model):
     '''
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     cellphone = models.CharField(max_length = 10, unique = True)
+    nickname = models.CharField(max_length = 20, null = True, blank = True)
     accepted_terms = models.BooleanField(default = False)
     email_verified = models.BooleanField(default = False)
     cellphone_verified = models.BooleanField(default = False)
@@ -67,8 +68,7 @@ class RestaurantOperatingHours(OperatingHours):
         unique_together = ('restaurant', 'day')
 
     def __str__(self):
-        return f'{self.restaurant.name} - {days.get(self.day)}'
-    
+        return f'{self.restaurant.name} - {days.get(self.day)}'  
 
 class LiqourOutletOperatingHours(OperatingHours):
     '''
@@ -174,7 +174,6 @@ class LiqourOutletMenuItem(MenuItem):
     class Meta:
         db_table = 'liqour_outlets_menu_items'
 
-
 class RestaurantMenuItemOption(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     menu_item = models.ForeignKey(RestaurantMenuItem, on_delete=models.CASCADE)
@@ -196,14 +195,23 @@ class OrderLineItem(models.Model):
         db_table = 'order_line_items'
         ordering = ('-id',)
 
-class SavedOrder(models.Model):
-    appuser = models.ForeignKey(AppUser, related_name = 'saved_orders', on_delete = models.CASCADE)
-    order_json = models.TextField()
-    date_saved = models.DateTimeField(auto_now_add = True)
+class ChatRoom(models.Model):
+    name = models.CharField(max_length = 200, db_index = True)
+    created_by = models.ForeignKey(AppUser, on_delete = models.CASCADE, related_name = 'chatrooms')
+    other_user = models.ForeignKey(AppUser, on_delete = models.CASCADE)
+    created_on = models.DateTimeField(auto_now_add = True)
 
     class Meta:
-        db_table = 'saved_orders'
+        db_table = 'chat_threads'
+        ordering = ('-created_on',)
 
-    def __str__(self):
-        return appuser.user.first_name
+class ChatMessage(models.Model):
+    chat_room = models.ForeignKey(ChatRoom, related_name = 'messages', on_delete = models.CASCADE)
+    message = models.CharField(max_length = 250)
+    sender = models.ForeignKey(AppUser, on_delete = models.CASCADE, related_name = 'sent_messages')
+    receiver = models.ForeignKey(AppUser, on_delete = models.CASCADE, related_name = 'received_messages')
+    sent = models.DateTimeField(auto_now_add = True)
 
+    class Meta:
+        db_table = 'chat_messages'
+        ordering = ('-sent',)
