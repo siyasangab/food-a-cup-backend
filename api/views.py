@@ -20,7 +20,7 @@ class Index(RetrieveAPIView):
     '''
         Index view to ping the api
     '''
-    permissions_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.AllowAny,)
 
     @method_decorator(ensure_csrf_cookie)
     def get(self, request):
