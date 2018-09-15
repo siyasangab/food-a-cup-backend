@@ -1,7 +1,7 @@
 import urllib
 from utils.app_logger import get_logger
 
-logger = get_logger(__NAME__)
+logger = get_logger(__name__)
 
 class NotificationService:
     @staticmethod
