@@ -10,6 +10,7 @@ from services.order_service import OrderService
 from services.menu_service import MenuService
 from services.restaurants import RestaurantsService
 from services.registration_service import RegistrationService
+from services.chat_service import ChatService
 from domain.serializers import *
 from domain.models import Option, OptionCategory
 from .permissions import Customer, CanChangeOrder
@@ -206,3 +207,11 @@ class GetMenuItemOptions(ListAPIView):
 
         return Response(serializer.data)
 
+class GetChatrooms(ListAPIView):
+    permission_classes = (Customer,)
+    def __init__(self):
+        self._chat_service = ChatService()
+
+    def get(self, request):
+        chatrooms = self._chat_service.get_appuser_chatrooms(request.appuser_id)
+        return OK(chatrooms)

@@ -211,6 +211,7 @@ class ChatMessage(models.Model):
     sender = models.ForeignKey(AppUser, on_delete = models.CASCADE, related_name = 'sent_messages')
     receiver = models.ForeignKey(AppUser, on_delete = models.CASCADE, related_name = 'received_messages')
     sent = models.DateTimeField(auto_now_add = True)
+    read = models.BooleanField(default = False)
 
     class Meta:
         db_table = 'chat_messages'

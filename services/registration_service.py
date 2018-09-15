@@ -4,6 +4,7 @@ from django.contrib.auth.models import User, Group
 from domain.models import AppUser
 from services.appuser_service import AppUserService
 from services.user_service import UserService
+from utils.hash import hash_string
 
 class RegistrationService():
     def __init__(self):

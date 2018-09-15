@@ -13,6 +13,7 @@ urlpatterns = [
     path('orders/<int:order_id>/cancel/', views.CancelOrder.as_view()),
     path('orders/<int:order_id>/update/', views.UpdateOrder.as_view()),
     path('restaurants/<str:restaurant>/menu/<str:menu_item>/', views.GetMenuItemOptions.as_view()),
+    path('chatrooms/', views.GetChatrooms.as_view()),
     path('admin/', include('merchants.urls')),
     path('auth/', include('oauth2_provider.urls', namespace='oauth2_provider'))
 ]

@@ -1,3 +1,5 @@
+from django.db.models import Q
+
 from .base.service_base import ServiceBase
 from .appuser_service import AppUserService
 from utils.app_logger import get_logger
@@ -6,7 +8,7 @@ from domain.models import ChatRoom, ChatMessage
 
 logger = get_logger(__name__)
 
-class ChatMessageService(ServiceBase):
+class ChatService(ServiceBase):
     def __init__(self):
         self._appuser_service = AppUserService()
         pass
@@ -27,6 +29,11 @@ class ChatMessageService(ServiceBase):
             return 
 
     def create_chatroom(self, from_email: str = '', to_email: str = ''):
+        if not from_email or not to_email:
+            logger.error(f'Can\'t create chatroom, between {from_email} and {to_email}')
+            return None
+
+        logger.error(f'Creating chatroom, between {from_email} and {to_email}')
         creator = self._appuser_service.get(email = from_email, by = 'email')
         other_user = self._appuser_service.get(email = to_email, by = 'email')
 
@@ -72,3 +79,18 @@ class ChatMessageService(ServiceBase):
             return None
 
         return list(chatroom.messages.all())
+
+    def get_appuser_chatrooms(self, appuser_id):
+        if not appuser_id or not isinstance(appuser_id, int):
+            logger.error('Invalid appuser id: {appuser_id}')
+            return
+        try:
+            logger.info(f'Getting chatrooms for appuser {appuser_id}')
+            q = Q()
+            q |= Q(created_by_id = appuser_id)
+            q |= Q(other_user_id = appuser_id)
+            chatrooms = list(ChatRoom.objects.filter(q))
+            return chatrooms
+        except Exception:
+            logger.exception(f'Could not get appuser {appuser_id} chatrooms')
+            return None

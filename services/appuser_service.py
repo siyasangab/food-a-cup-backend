@@ -16,7 +16,7 @@ class AppUserService(ServiceBase):
             app_user = AppUser.objects.create(**kwargs)
             return app_user
         except Exception as e:
-            raise Exception(e)
+            logger.exception('Could not create appuser')
 
 
     def get(self, appuser_id: int = 0, email: str = '', by = 'id'):
