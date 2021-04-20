@@ -2,7 +2,7 @@ asgiref==2.3.2
 astroid==1.6.1
 async-timeout==3.0.0
 attrs==18.2.0
-autobahn==18.9.2
+autobahn==20.12.3
 Automat==0.7.0
 certifi==2018.1.18
 channels==2.1.3
